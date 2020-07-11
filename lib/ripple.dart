@@ -22,12 +22,12 @@ class _RippleEffectState extends State<RippleEffect>
     _animationController = AnimationController(
       vsync: this,
       duration: Duration(
-        seconds: 100,
+        seconds: 50,
       ),
     )..repeat();
     animation = Tween<double>(
       begin: 10,
-      end: 10000,
+      end: 500,
     ).animate(_animationController)
       ..addListener(() {
         setState(() {
@@ -57,6 +57,7 @@ class _RippleEffectState extends State<RippleEffect>
   }
 }
 
+/**https://medium.com/flutter-community/flutter-custom-painter-circular-wave-animation-bdc65c112690 */
 class CanvasPainter extends CustomPainter {
   CanvasPainter({this.radius});
   double radius;
@@ -72,27 +73,27 @@ class CanvasPainter extends CustomPainter {
     // for (int i = 0; i < 1000; i++) {
     //   canvas.drawCircle(c, radius % (i * 15), paint);
     // }
-    canvas.drawCircle(c, radius % (1000), paint);
-    canvas.drawCircle(c, radius % (950), paint);
-    canvas.drawCircle(c, radius % (900), paint);
-    canvas.drawCircle(c, radius % (850), paint);
-    canvas.drawCircle(c, radius % (850), paint);
-    canvas.drawCircle(c, radius % (800), paint);
-    canvas.drawCircle(c, radius % (750), paint);
-    canvas.drawCircle(c, radius % (700), paint);
-    canvas.drawCircle(c, radius % (650), paint);
-    canvas.drawCircle(c, radius % (600), paint);
-    canvas.drawCircle(c, radius % (550), paint);
-    canvas.drawCircle(c, radius % (500), paint);
-    // canvas.drawCircle(c, radius % (500), paint);
-    // canvas.drawCircle(c, radius % (500), paint);
-    // canvas.drawCircle(c, radius % (500), paint);
+    var currentRadius = radius;
+//     while (currentRadius < 100) {
+//       canvas.drawCircle(c, currentRadius, paint);
+//       currentRadius += 10.0;
+//     }
+    double centerX = size.width / 2.0;
+    double centerY = size.height / 2.0;
+    double maxRadius = hypot(centerX, centerY);
 
-    // canvas.drawCircle(c, radius % (25 * 1), paint);
+    while (currentRadius < maxRadius) {
+      canvas.drawCircle(Offset(centerX, centerY), currentRadius, paint);
+      currentRadius += 10.0;
+    }
   }
 
   @override
-  bool shouldRepaint(CustomPainter oldDelegate) => true;
-  // TODO: implement shouldRepaint
+  bool shouldRepaint(CanvasPainter oldDelegate) {
+    return oldDelegate.radius != radius;
+  }
 
+  double hypot(double x, double y) {
+    return math.sqrt(x * x + y * y);
+  }
 }
