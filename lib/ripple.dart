@@ -13,8 +13,6 @@ class RippleEffect extends StatefulWidget {
 class _RippleEffectState extends State<RippleEffect>
     with SingleTickerProviderStateMixin {
   AnimationController _animationController;
-  Animation<double> animation;
-
   @override
   void initState() {
     // TODO: implement initState
@@ -22,18 +20,10 @@ class _RippleEffectState extends State<RippleEffect>
     _animationController = AnimationController(
       vsync: this,
       duration: Duration(
-        seconds: 50,
+        seconds: 2,
       ),
     )..repeat();
-    animation = Tween<double>(
-      begin: 10,
-      end: 500,
-    ).animate(_animationController)
-      ..addListener(() {
-        setState(() {
-          radius = _animationController.value;
-        });
-      })
+    _animationController
       ..addStatusListener((status) {
         if (status == AnimationStatus.completed) {
           _animationController.reset();
@@ -48,18 +38,23 @@ class _RippleEffectState extends State<RippleEffect>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: CustomPaint(
-        painter: CanvasPainter(radius: animation.value),
-        child: Container(),
-      ),
+      body: AnimatedBuilder(
+          animation: CurvedAnimation(
+              parent: _animationController, curve: Curves.fastOutSlowIn),
+          builder: (context, child) {
+            return CustomPaint(
+              painter: RipplePainter(radius: 20 * _animationController.value),
+              child: Container(),
+            );
+          }),
     );
     // }));
   }
 }
 
 /**https://medium.com/flutter-community/flutter-custom-painter-circular-wave-animation-bdc65c112690 */
-class CanvasPainter extends CustomPainter {
-  CanvasPainter({this.radius});
+class RipplePainter extends CustomPainter {
+  RipplePainter({this.radius});
   double radius;
   @override
   @override
@@ -69,28 +64,20 @@ class CanvasPainter extends CustomPainter {
       ..color = Color.fromRGBO(97, 190, 162, 1.0)
       ..strokeWidth = 5.0
       ..style = PaintingStyle.stroke;
-    final c = size.center(Offset.zero);
-    // for (int i = 0; i < 1000; i++) {
-    //   canvas.drawCircle(c, radius % (i * 15), paint);
-    // }
     var currentRadius = radius;
-//     while (currentRadius < 100) {
-//       canvas.drawCircle(c, currentRadius, paint);
-//       currentRadius += 10.0;
-//     }
     double centerX = size.width / 2.0;
     double centerY = size.height / 2.0;
-    double maxRadius = hypot(centerX, centerY);
+    double maxRadius = 2 * hypot(centerX, centerY);
 
     while (currentRadius < maxRadius) {
       canvas.drawCircle(Offset(centerX, centerY), currentRadius, paint);
-      currentRadius += 10.0;
+      currentRadius += 20.0;
     }
   }
 
   @override
-  bool shouldRepaint(CanvasPainter oldDelegate) {
-    return oldDelegate.radius != radius;
+  bool shouldRepaint(RipplePainter oldDelegate) {
+    return true; //oldDelegate.radius != radius;
   }
 
   double hypot(double x, double y) {

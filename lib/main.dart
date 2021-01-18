@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_generative/donut.dart';
-import 'package:flutter_generative/geometricspiro.dart';
-import 'package:flutter_generative/homepage.dart';
 import 'package:flutter_generative/ripple.dart';
 
 void main() {
