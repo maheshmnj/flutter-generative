@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_generative/retro.dart';
 
 import 'donut.dart';
 import 'geometricspiro.dart';
@@ -17,7 +18,8 @@ class _ListWidgetState extends State<ListWidget> {
   Map<String, Widget> _list = {
     "Donut": DonutsWidget(),
     "Ripple": RippleEffect(),
-    "Spiro": GeometricSpiro()
+    "Spiro": GeometricSpiro(),
+    'Retro': RetroArt()
   };
 
   Future<void> push(BuildContext context, Widget widget) async {
