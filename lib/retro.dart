@@ -15,31 +15,49 @@ class _RetroArtState extends State<RetroArt>
   void initState() {
     // TODO: implement initState
     super.initState();
-    _animationController = AnimationController(
+    _animationController = AnimationController.unbounded(
       vsync: this,
-      duration: Duration(
-        seconds: 2,
-      ),
     );
-
-    animation = Tween<double>(
-      begin: 0,
-      end: pi / 8,
-    ).animate(_animationController)
-      ..addStatusListener((status) {
-        if (status == AnimationStatus.completed) {
-          Future.delayed(Duration(seconds: 2), () {
-            _animationController.reset();
-            _animationController.forward(from: 0.0);
-          });
-        }
-      });
-    // ..repeat(period: Duration(seconds: 2));
-
-    _animationController.forward();
+    startAnimation();
   }
 
-  double angle = pi / 8;
+  void startAnimation() async {
+    var position = 0;
+    while (mounted) {
+      position++;
+      _animationController.animateTo(
+        position.toDouble(),
+        curve: Curves.ease,
+        duration: Duration(
+          seconds: 1,
+        ),
+      );
+      await Future.delayed(const Duration(seconds: 2));
+    }
+  }
+
+  bool isNegative = false;
+  double rotateAngle(int index) {
+    if (index % 2 != 0) {
+      isNegative = !isNegative;
+      double angle = index < 7
+          ? 8.0
+          : index < 16
+              ? 32.0
+              : 64.0;
+      if (isNegative) {
+        return -_animationController.value * pi / angle;
+      } else {
+        return _animationController.value * pi / angle;
+      }
+    } else {
+      return 0;
+    }
+  }
+
+  int linesCount = 8;
+  int angleMultiplier = 3;
+  bool toggle = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,12 +65,16 @@ class _RetroArtState extends State<RetroArt>
         body: Stack(
           alignment: Alignment.center,
           children: [
-            // for (int i = 0; i < 10; i++)
-            RetroWheel(
-              lines: 8,
-              radius: 40,
-              animation: animation,
-            )
+            for (int i = 1; i < 20; i++)
+              AnimatedBuilder(
+                animation: _animationController,
+                builder: (_, Widget child) => RetroWheel(
+                  lines: linesCount * i,
+                  innerRadius: i != 1 ? 40.0 * (i - 1) : 20,
+                  outerRadius: 40.0 * (i),
+                  angle: rotateAngle(i),
+                ),
+              )
           ],
         ));
   }
@@ -60,10 +82,12 @@ class _RetroArtState extends State<RetroArt>
 
 class RetroWheel extends StatefulWidget {
   final int lines;
-  final int radius;
-  final Animation<double> animation;
+  final double innerRadius;
+  final double outerRadius;
+  final double angle;
 
-  const RetroWheel({Key key, this.lines, this.radius, this.animation})
+  const RetroWheel(
+      {Key key, this.lines, this.innerRadius, this.outerRadius, this.angle})
       : super(key: key);
   @override
   _RetroWheelState createState() => _RetroWheelState();
@@ -74,23 +98,23 @@ class _RetroWheelState extends State<RetroWheel> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    print("rebuild");
   }
 
   @override
   Widget build(BuildContext context) {
-    print(widget.animation.value);
     return Center(
-      child: AnimatedBuilder(
-          animation: widget.animation,
-          builder: (BuildContext context, Widget w) {
-            return Transform.rotate(
-              angle: widget.animation.value * (pi / 8),
+      child: widget.angle != 0
+          ? Transform.rotate(
+              angle: widget.angle,
               child: CustomPaint(
-                painter: RetroPainter(40.0, 160.0),
+                painter: RetroPainter(
+                    widget.innerRadius, widget.outerRadius, widget.lines),
               ),
-            );
-          }),
+            )
+          : CustomPaint(
+              painter: RetroPainter(
+                  widget.innerRadius, widget.outerRadius, widget.lines),
+            ),
     );
   }
 }
@@ -98,8 +122,9 @@ class _RetroWheelState extends State<RetroWheel> {
 class RetroPainter extends CustomPainter {
   final double innerRadius;
   final double outerRadius;
+  final int noOfLines;
 
-  RetroPainter(this.innerRadius, this.outerRadius);
+  RetroPainter(this.innerRadius, this.outerRadius, this.noOfLines);
   @override
   void paint(Canvas canvas, Size size) {
     // TODO: implement paint
@@ -111,7 +136,6 @@ class RetroPainter extends CustomPainter {
     // double centerX = size.width / 2.0;
     // double centerY = size.height / 2.0;
     // Offset center = Offset(centerX, centerY);
-    int noOfLines = 8;
     final initDegree = 360 / noOfLines;
     for (int i = 1; i <= noOfLines; i++) {
       final degree = initDegree * (pi / 180) * i;
