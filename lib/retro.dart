@@ -55,6 +55,21 @@ class _RetroArtState extends State<RetroArt>
     }
   }
 
+  List<Color> lineColors = [
+    Colors.blue[100],
+    Colors.green[100],
+    Colors.pink[100],
+    Colors.white,
+    Colors.orange[100],
+    Colors.purple[100],
+    Colors.red[100],
+  ];
+
+  Color getColor(int index) {
+    // int index = Random().nextInt(lineColors.length%);
+    return lineColors[index % lineColors.length];
+  }
+
   int linesCount = 8;
   int angleMultiplier = 3;
   bool toggle = false;
@@ -73,6 +88,7 @@ class _RetroArtState extends State<RetroArt>
                   innerRadius: i != 1 ? 40.0 * (i - 1) : 20,
                   outerRadius: 40.0 * (i),
                   angle: rotateAngle(i),
+                  color: getColor(i),
                 ),
               )
           ],
@@ -85,9 +101,15 @@ class RetroWheel extends StatefulWidget {
   final double innerRadius;
   final double outerRadius;
   final double angle;
+  final Color color;
 
   const RetroWheel(
-      {Key key, this.lines, this.innerRadius, this.outerRadius, this.angle})
+      {Key key,
+      this.lines,
+      this.innerRadius,
+      this.outerRadius,
+      this.angle,
+      this.color})
       : super(key: key);
   @override
   _RetroWheelState createState() => _RetroWheelState();
@@ -95,25 +117,19 @@ class RetroWheel extends StatefulWidget {
 
 class _RetroWheelState extends State<RetroWheel> {
   @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Center(
       child: widget.angle != 0
           ? Transform.rotate(
               angle: widget.angle,
               child: CustomPaint(
-                painter: RetroPainter(
-                    widget.innerRadius, widget.outerRadius, widget.lines),
+                painter: RetroPainter(widget.innerRadius, widget.outerRadius,
+                    widget.lines, widget.color),
               ),
             )
           : CustomPaint(
-              painter: RetroPainter(
-                  widget.innerRadius, widget.outerRadius, widget.lines),
+              painter: RetroPainter(widget.innerRadius, widget.outerRadius,
+                  widget.lines, widget.color),
             ),
     );
   }
@@ -123,14 +139,16 @@ class RetroPainter extends CustomPainter {
   final double innerRadius;
   final double outerRadius;
   final int noOfLines;
+  final Color color;
 
-  RetroPainter(this.innerRadius, this.outerRadius, this.noOfLines);
+  RetroPainter(this.innerRadius, this.outerRadius, this.noOfLines, this.color);
+
   @override
   void paint(Canvas canvas, Size size) {
     // TODO: implement paint
 
     Paint paint = Paint()
-      ..color = Colors.white
+      ..color = color
       ..strokeWidth = 1.5;
 
     // double centerX = size.width / 2.0;
