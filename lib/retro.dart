@@ -37,18 +37,26 @@ class _RetroArtState extends State<RetroArt>
   }
 
   bool isNegative = false;
+
+  int getFactor(int index) {
+    int i = 0;
+    int result = pow(2, i);
+    while (index > result) {
+      i++;
+      result = pow(2, i);
+    }
+    return result;
+  }
+
   double rotateAngle(int index) {
+    factor = getFactor(index);
     if (index % 2 != 0) {
       isNegative = !isNegative;
-      double angle = index < 7
-          ? 8.0
-          : index < 16
-              ? 32.0
-              : 64.0;
+      int angle = 8 * getFactor(index);
       if (isNegative) {
-        return -_animationController.value * pi / angle;
+        return -_animationController.value * 2 * pi / angle;
       } else {
-        return _animationController.value * pi / angle;
+        return _animationController.value * 2 * pi / angle;
       }
     } else {
       return 0;
@@ -71,8 +79,9 @@ class _RetroArtState extends State<RetroArt>
   }
 
   int linesCount = 8;
-  int angleMultiplier = 3;
+  int factor = 1;
   bool toggle = false;
+  int power = 0;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -84,7 +93,7 @@ class _RetroArtState extends State<RetroArt>
               AnimatedBuilder(
                 animation: _animationController,
                 builder: (_, Widget child) => RetroWheel(
-                  lines: linesCount * i,
+                  lines: getFactor(i) * 8,
                   innerRadius: i != 1 ? 40.0 * (i - 1) : 20,
                   outerRadius: 40.0 * (i),
                   angle: rotateAngle(i),
