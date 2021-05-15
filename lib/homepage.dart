@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_generative/retro.dart';
+import 'package:flutter_generative/sunshine.dart';
 
-import 'donut.dart';
-import 'geometricspiro.dart';
-import 'ripple.dart';
+import 'package:flutter_generative/donut.dart';
+import 'package:flutter_generative/geometricspiro.dart';
+import 'package:flutter_generative/ripple.dart';
 
 class ListWidget extends StatefulWidget {
   @override
@@ -19,7 +20,8 @@ class _ListWidgetState extends State<ListWidget> {
     "Donut": DonutsWidget(),
     "Ripple": RippleEffect(),
     "Spiro": GeometricSpiro(),
-    'Retro': RetroArt()
+    'Retro': RetroArt(),
+    'Sunshine': Sunshine(),
   };
 
   Future<void> push(BuildContext context, Widget widget) async {
