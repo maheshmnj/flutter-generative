@@ -29,20 +29,16 @@ class RaysAnimatorState extends State<RaysAnimator> {
   int raysCount = 50;
   @override
   Widget build(BuildContext context) {
-    final int numberOfAngles = 20;
+    final int numberOfAngles = 60;
     return Center(
       child: Stack(
         children: [
-          Container(color: Colors.white, child: Circle()),
           Align(
               alignment: Alignment.center,
               child: RayBuilder(
-                color: Colors.blue[300],
                 numberOfAngles: numberOfAngles, //angleDifference,
-                length: 20,
-                width: 5,
-                position: Offset(0, 0),
               )),
+          Container(child: Circle()),
         ],
       ),
     );
@@ -50,22 +46,9 @@ class RaysAnimatorState extends State<RaysAnimator> {
 }
 
 class RayBuilder extends StatefulWidget {
-  final double width;
-  final double length;
-  final Color color;
   final int numberOfAngles;
 
-  /// initial position
-  final Offset position;
-
-  const RayBuilder(
-      {Key key,
-      this.width = 4.0,
-      this.length,
-      this.color,
-      this.numberOfAngles,
-      this.position})
-      : super(key: key);
+  const RayBuilder({Key key, this.numberOfAngles}) : super(key: key);
 
   @override
   _RayBuilderState createState() => _RayBuilderState();
@@ -84,55 +67,54 @@ class _RayBuilderState extends State<RayBuilder>
     _animationController.forward();
   }
 
-  double gap = 5.0;
   @override
   Widget build(BuildContext context) {
     return CustomPaint(
-      painter: Raypainter(
-          color: widget.color,
-          length: widget.length,
-          width: widget.width,
-          numberOfAngles: widget.numberOfAngles),
+      painter: Raypainter(numberOfAngles: widget.numberOfAngles),
     );
   }
 }
 
 class Raypainter extends CustomPainter {
-  final Offset offset;
-  final Color color;
   final double speed;
-  final double length;
-  final double width;
   final int numberOfAngles;
 
-  Raypainter(
-      {this.speed,
-      this.offset,
-      this.width,
-      this.color,
-      this.numberOfAngles,
-      this.length});
+  Raypainter({
+    this.speed,
+    this.numberOfAngles,
+  });
+
+  List<Color> lineColors = [
+    Colors.blueAccent,
+    Colors.greenAccent,
+    Colors.brown,
+    Colors.orangeAccent,
+    Colors.purpleAccent,
+    Colors.redAccent,
+    Colors.cyanAccent,
+    Colors.blueGrey
+  ];
 
   @override
   void paint(Canvas canvas, Size size) {
     // TODO: implement paint
-    Paint linePaint = Paint()
-      ..color = color
-      ..strokeWidth = width
-      ..strokeCap = StrokeCap.round;
+    Paint linePaint = Paint()..strokeCap = StrokeCap.round;
     double centerX = size.width / 2.0;
     double centerY = size.height / 2.0;
     double dx1 = centerX;
     double dy1 = centerY;
     double dx2 = dx1;
     double dy2 = dy1;
-    double gapBetweenLines = 30.0;
     int noOfRaysAlongTheLine = 5;
     double dr = 0;
     for (int y = 1; y <= numberOfAngles; y++) {
       double angle = y * (360 / numberOfAngles * math.pi / 180);
       for (int i = 0; i <= noOfRaysAlongTheLine; i++) {
         /// draw along the lines
+        linePaint..color = lineColors[math.Random().nextInt(lineColors.length)];
+        linePaint..strokeWidth = nextInteger(5, 8).toDouble();
+        int length = nextInteger(20, 50);
+        double gapBetweenLines = nextInteger(30, 50).toDouble();
         canvas.drawLine(Offset(dx1, dy1), Offset(dx2, dy2), linePaint);
         dr = i * (gapBetweenLines + length);
         dx1 = dr * math.cos(angle);
@@ -143,6 +125,8 @@ class Raypainter extends CustomPainter {
       }
     }
   }
+
+  int nextInteger(int min, int max) => min + math.Random().nextInt(max - min);
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) {
@@ -173,6 +157,9 @@ class CirclePainter extends CustomPainter {
     double centerX = size.width / 2.0;
     double centerY = size.height / 2.0;
     canvas.drawCircle(Offset(centerX, centerY), 150.0, paint);
+    paint.style = PaintingStyle.fill;
+    paint.color = Colors.white;
+    canvas.drawCircle(Offset(centerX, centerY), 145.0, paint);
   }
 
   @override
