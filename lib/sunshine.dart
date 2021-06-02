@@ -26,23 +26,23 @@ class RaysAnimator extends StatefulWidget {
 }
 
 class RaysAnimatorState extends State<RaysAnimator> {
-  int raysCount = 10;
+  int raysCount = 50;
   @override
   Widget build(BuildContext context) {
     final angleDifference = 2 * math.pi / raysCount;
     return Center(
       child: Stack(
         children: [
-          Circle(),
-          for (int i = 1; i < 10; i++)
-            Align(
-                alignment: Alignment.center,
-                child: RayBuilder(
-                  color: Colors.orange[300],
-                  angle: angleDifference * i,
-                  length: 80,
-                  width: 15,
-                )),
+          Container(color: Colors.white, child: Circle()),
+          Align(
+              alignment: Alignment.center,
+              child: RayBuilder(
+                color: Colors.blue[300],
+                angle: math.pi * 2 / 6, //angleDifference,
+                length: 20,
+                width: 5,
+                position: Offset(0, 0),
+              )),
         ],
       ),
     );
@@ -54,10 +54,17 @@ class RayBuilder extends StatefulWidget {
   final double length;
   final Color color;
   final double angle;
+
+  /// initial position
   final Offset position;
 
   const RayBuilder(
-      {Key key, this.width, this.length, this.color, this.angle, this.position})
+      {Key key,
+      this.width = 4.0,
+      this.length,
+      this.color,
+      this.angle,
+      this.position})
       : super(key: key);
 
   @override
@@ -80,21 +87,12 @@ class _RayBuilderState extends State<RayBuilder>
   double gap = 5.0;
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        for (int i = 1; i < 20; i++)
-          Transform.rotate(
-            angle: widget.angle,
-            child: CustomPaint(
-              painter: Raypainter(
-                  offset: Offset(i + 50.0, math.tan(math.pi / 4) * (i + 50)),
-                  color: Colors.orange[300]),
-            ),
-            // child: Transform.translate(
-            //     offset: Offset(i + 60.0, math.tan(math.pi / 4) * (i + 50)),
-            //     child: ),
-          ),
-      ],
+    return CustomPaint(
+      painter: Raypainter(
+          color: widget.color,
+          length: widget.length,
+          width: widget.width,
+          angle: widget.angle),
     );
   }
 }
@@ -102,24 +100,45 @@ class _RayBuilderState extends State<RayBuilder>
 class Raypainter extends CustomPainter {
   final Offset offset;
   final Color color;
+  final double speed;
+  final double angle;
+  final double length;
+  final double width;
 
-  Raypainter({this.offset, this.color});
+  Raypainter(
+      {this.speed,
+      this.angle,
+      this.offset,
+      this.width,
+      this.color,
+      this.length});
 
   @override
   void paint(Canvas canvas, Size size) {
     // TODO: implement paint
-    Paint linePaint = Paint()..color = color;
+    Paint linePaint = Paint()
+      ..color = color
+      ..strokeWidth = width
+      ..strokeCap = StrokeCap.round;
     double centerX = size.width / 2.0;
     double centerY = size.height / 2.0;
-    double dx = centerX;
-    double dy = centerY;
-    double gapBetweenLines = 5.0;
-    for (int i = 1; i < 10; i++) {
+    double dx1 = centerX;
+    double dy1 = centerY;
+    double dx2 = dx1;
+    double dy2 = dy1;
+    double gapBetweenLines = 30.0;
+    int noOfRaysAlongTheLine = 5;
+    double dr = 0;
+
+    for (int i = 0; i <= noOfRaysAlongTheLine; i++) {
       /// draw along the lines
-      dx = dx + gapBetweenLines;
-      dy = dy + gapBetweenLines;
-      canvas.drawRect(
-          Rect.fromPoints(Offset(40, 0), Offset(50, math.tan(60))), linePaint);
+      canvas.drawLine(Offset(dx1, dy1), Offset(dx2, dy2), linePaint);
+      dr = i * (gapBetweenLines + length);
+      dx1 = dr * math.cos(angle);
+      dy1 = dr * math.sin(angle);
+      dr = i * gapBetweenLines + (i - 1) * length;
+      dx2 = dr * math.cos(angle);
+      dy2 = dr * math.sin(angle);
     }
   }
 
