@@ -63,15 +63,26 @@ class _RayBuilderState extends State<RayBuilder>
     // TODO: implement initState
     super.initState();
     _animationController = AnimationController.unbounded(
-        vsync: this, duration: Duration(seconds: 10));
+        vsync: this, duration: Duration(seconds: 5));
+    _animationController.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        _animationController.reset();
+        _animationController.forward();
+      }
+    });
+
     _animationController.forward();
   }
 
   @override
   Widget build(BuildContext context) {
-    return CustomPaint(
-      painter: Raypainter(numberOfAngles: widget.numberOfAngles),
-    );
+    return AnimatedBuilder(
+        animation: _animationController,
+        builder: (context, snapshot) {
+          return CustomPaint(
+            painter: Raypainter(numberOfAngles: widget.numberOfAngles),
+          );
+        });
   }
 }
 
