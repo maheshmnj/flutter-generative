@@ -29,7 +29,7 @@ class RaysAnimatorState extends State<RaysAnimator> {
   int raysCount = 50;
   @override
   Widget build(BuildContext context) {
-    final angleDifference = 2 * math.pi / raysCount;
+    final int numberOfAngles = 20;
     return Center(
       child: Stack(
         children: [
@@ -38,7 +38,7 @@ class RaysAnimatorState extends State<RaysAnimator> {
               alignment: Alignment.center,
               child: RayBuilder(
                 color: Colors.blue[300],
-                angle: math.pi * 2 / 6, //angleDifference,
+                numberOfAngles: numberOfAngles, //angleDifference,
                 length: 20,
                 width: 5,
                 position: Offset(0, 0),
@@ -53,7 +53,7 @@ class RayBuilder extends StatefulWidget {
   final double width;
   final double length;
   final Color color;
-  final double angle;
+  final int numberOfAngles;
 
   /// initial position
   final Offset position;
@@ -63,7 +63,7 @@ class RayBuilder extends StatefulWidget {
       this.width = 4.0,
       this.length,
       this.color,
-      this.angle,
+      this.numberOfAngles,
       this.position})
       : super(key: key);
 
@@ -92,7 +92,7 @@ class _RayBuilderState extends State<RayBuilder>
           color: widget.color,
           length: widget.length,
           width: widget.width,
-          angle: widget.angle),
+          numberOfAngles: widget.numberOfAngles),
     );
   }
 }
@@ -101,16 +101,16 @@ class Raypainter extends CustomPainter {
   final Offset offset;
   final Color color;
   final double speed;
-  final double angle;
   final double length;
   final double width;
+  final int numberOfAngles;
 
   Raypainter(
       {this.speed,
-      this.angle,
       this.offset,
       this.width,
       this.color,
+      this.numberOfAngles,
       this.length});
 
   @override
@@ -129,16 +129,18 @@ class Raypainter extends CustomPainter {
     double gapBetweenLines = 30.0;
     int noOfRaysAlongTheLine = 5;
     double dr = 0;
-
-    for (int i = 0; i <= noOfRaysAlongTheLine; i++) {
-      /// draw along the lines
-      canvas.drawLine(Offset(dx1, dy1), Offset(dx2, dy2), linePaint);
-      dr = i * (gapBetweenLines + length);
-      dx1 = dr * math.cos(angle);
-      dy1 = dr * math.sin(angle);
-      dr = i * gapBetweenLines + (i - 1) * length;
-      dx2 = dr * math.cos(angle);
-      dy2 = dr * math.sin(angle);
+    for (int y = 1; y <= numberOfAngles; y++) {
+      double angle = y * (360 / numberOfAngles * math.pi / 180);
+      for (int i = 0; i <= noOfRaysAlongTheLine; i++) {
+        /// draw along the lines
+        canvas.drawLine(Offset(dx1, dy1), Offset(dx2, dy2), linePaint);
+        dr = i * (gapBetweenLines + length);
+        dx1 = dr * math.cos(angle);
+        dy1 = dr * math.sin(angle);
+        dr = i * gapBetweenLines + (i - 1) * length;
+        dx2 = dr * math.cos(angle);
+        dy2 = dr * math.sin(angle);
+      }
     }
   }
 
