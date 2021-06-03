@@ -29,7 +29,7 @@ class RaysAnimatorState extends State<RaysAnimator> {
   int raysCount = 50;
   @override
   Widget build(BuildContext context) {
-    final int numberOfAngles = 60;
+    final int numberOfAngles = 50;
     return Center(
       child: Stack(
         children: [
@@ -62,8 +62,8 @@ class _RayBuilderState extends State<RayBuilder>
   void initState() {
     // TODO: implement initState
     super.initState();
-    _animationController = AnimationController.unbounded(
-        vsync: this, duration: Duration(seconds: 5));
+    _animationController = AnimationController(
+        value: 0.0, vsync: this, duration: Duration(seconds: 10));
     _animationController.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
         _animationController.reset();
@@ -75,23 +75,33 @@ class _RayBuilderState extends State<RayBuilder>
   }
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
         animation: _animationController,
-        builder: (context, snapshot) {
+        builder: (BuildContext context, Widget child) {
+          // print(_animationController.value);
           return CustomPaint(
-            painter: Raypainter(numberOfAngles: widget.numberOfAngles),
+            painter: Raypainter(
+                numberOfAngles: widget.numberOfAngles,
+                animationSpeed: _animationController.value),
           );
         });
   }
 }
 
 class Raypainter extends CustomPainter {
-  final double speed;
+  final double animationSpeed;
   final int numberOfAngles;
 
   Raypainter({
-    this.speed,
+    this.animationSpeed,
     this.numberOfAngles,
   });
 
@@ -112,27 +122,33 @@ class Raypainter extends CustomPainter {
     Paint linePaint = Paint()..strokeCap = StrokeCap.round;
     double centerX = size.width / 2.0;
     double centerY = size.height / 2.0;
-    double dx1 = centerX;
-    double dy1 = centerY;
-    double dx2 = dx1;
-    double dy2 = dy1;
-    int noOfRaysAlongTheLine = 5;
+    int noOfRaysAlongTheLine = 10;
     double dr = 0;
     for (int y = 1; y <= numberOfAngles; y++) {
+      double dx1 = centerX;
+      double dy1 = centerY;
+      double dx2 = dx1;
+      double dy2 = dy1;
       double angle = y * (360 / numberOfAngles * math.pi / 180);
+      linePaint..color = lineColors[0];
+      //lineColors[math.Random().nextInt(lineColors.length)];
+      linePaint..strokeWidth = 6;
+      //nextInteger(5, 8).toDouble();
       for (int i = 0; i <= noOfRaysAlongTheLine; i++) {
         /// draw along the lines
-        linePaint..color = lineColors[math.Random().nextInt(lineColors.length)];
-        linePaint..strokeWidth = nextInteger(5, 8).toDouble();
-        int length = nextInteger(20, 50);
-        double gapBetweenLines = nextInteger(30, 50).toDouble();
-        canvas.drawLine(Offset(dx1, dy1), Offset(dx2, dy2), linePaint);
+        int length = 20;
+        //nextInteger(15, 20);
+        double gapBetweenLines = 15;
+        //nextInteger(12, 18).toDouble();
+        canvas.drawLine(Offset(dx1 * animationSpeed, dy1 * animationSpeed),
+            Offset(dx2 * animationSpeed, dy2 * animationSpeed), linePaint);
         dr = i * (gapBetweenLines + length);
-        dx1 = dr * math.cos(angle);
-        dy1 = dr * math.sin(angle);
+        dx1 = dx1 + dr * math.cos(angle);
+        dy1 = dy1 + dr * math.sin(angle);
         dr = i * gapBetweenLines + (i - 1) * length;
-        dx2 = dr * math.cos(angle);
-        dy2 = dr * math.sin(angle);
+        dx2 = dx2 + dr * math.cos(angle);
+        dy2 = dy2 + dr * math.sin(angle);
+        // dr += animationSpeed;
       }
     }
   }
