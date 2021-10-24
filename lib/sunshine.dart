@@ -44,6 +44,17 @@ class RaysAnimatorState extends State<RaysAnimator> {
   }
 }
 
+List<Color> lineColors = [
+  Colors.blueAccent,
+  Colors.greenAccent,
+  Colors.brown,
+  Colors.orangeAccent,
+  Colors.purpleAccent,
+  Colors.redAccent,
+  Colors.cyanAccent,
+  Colors.blueGrey
+];
+
 class RayBuilder extends StatefulWidget {
   final int numberOfAngles;
 
@@ -82,15 +93,25 @@ class _RayBuilderState extends State<RayBuilder>
     super.dispose();
   }
 
+  int nextInteger(int min, int max) => min + math.Random().nextInt(max - min);
+
   @override
   Widget build(BuildContext context) {
+    // final color = lineColors[nextInteger(0, lineColors.length)];
     return AnimatedBuilder(
         animation: _animation,
         builder: (BuildContext context, Widget child) {
-          return CustomPaint(
-            painter: Raypainter(
-                numberOfAngles: widget.numberOfAngles,
-                animationSpeed: _animationController.value * 10),
+          return Stack(
+            children: [
+              for (int i = 0; i < 10; i++)
+                CustomPaint(
+                  painter: Raypainter(
+                      angle: i * math.pi / 4,
+                      color: lineColors[i % lineColors.length],
+                      radius: 100,
+                      animationSpeed: _animationController.value),
+                ),
+            ],
           );
         });
   }
@@ -98,20 +119,18 @@ class _RayBuilderState extends State<RayBuilder>
 
 class Raypainter extends CustomPainter {
   final double animationSpeed;
-  final int numberOfAngles;
+  final double angle;
+  final double radius;
+  final int lineLength;
+  final Color color;
 
-  Raypainter({this.animationSpeed, this.numberOfAngles});
-
-  List<Color> lineColors = [
-    Colors.blueAccent,
-    Colors.greenAccent,
-    Colors.brown,
-    Colors.orangeAccent,
-    Colors.purpleAccent,
-    Colors.redAccent,
-    Colors.cyanAccent,
-    Colors.blueGrey
-  ];
+  Raypainter({
+    this.animationSpeed,
+    this.angle,
+    this.color = Colors.red,
+    this.radius = 200,
+    this.lineLength = 50,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -119,30 +138,25 @@ class Raypainter extends CustomPainter {
     Paint linePaint = Paint()..strokeCap = StrokeCap.round;
     double centerX = size.width / 2.0;
     double centerY = size.height / 2.0;
-    int noOfRaysAlongTheLine = 10;
-    double gapBetweenLines = 15;
-    double dr = 0;
-    double innerRadius = 200;
+    double innerRadius = radius;
     linePaint..strokeWidth = 5;
-    for (int i = 0; i < numberOfAngles; i++) {
-      double angle = i * (2 * math.pi / numberOfAngles);
-      double x = centerX + innerRadius * math.cos(angle);
-      double y = centerY + innerRadius * math.sin(angle);
-      linePaint.color = lineColors[i % lineColors.length];
-      canvas.drawLine(Offset(centerX, centerY), Offset(x, y), linePaint);
-    }
-    for (int i = 0; i < 10; i++) {
-      // int index = math.Random().nextInt(lineColors.length);
-      // linePaint..color = lineColors[index];
-      double angle = i * math.pi / 4;
-      double dx1 = animationSpeed * innerRadius * math.cos(angle);
-      double dy1 = animationSpeed * innerRadius * math.sin(angle);
-      double dx2 = animationSpeed * (50 + innerRadius) * math.cos(angle);
-      double dy2 = animationSpeed * (50 + innerRadius) * math.sin(angle);
-      Offset p1 = Offset(dx1, dy1);
-      Offset p2 = Offset(dx2, dy2);
-      canvas.drawLine(p1, p2, linePaint);
-    }
+    linePaint.color = color;
+    // for (int i = 0; i < numberOfAngles; i++) {
+    //   double angle = i * (2 * math.pi / numberOfAngles);
+    //   double x = centerX + innerRadius * math.cos(angle);
+    //   double y = centerY + innerRadius * math.sin(angle);
+    //   linePaint.color = lineColors[i % lineColors.length];
+    //   canvas.drawLine(Offset(centerX, centerY), Offset(x, y), linePaint);
+    // }
+    double dx1 = animationSpeed * 10 * innerRadius * math.cos(angle);
+    double dy1 = animationSpeed * 10 * innerRadius * math.sin(angle);
+    double dx2 =
+        animationSpeed * 10 * (lineLength + innerRadius) * math.cos(angle);
+    double dy2 =
+        animationSpeed * 10 * (lineLength + innerRadius) * math.sin(angle);
+    Offset p1 = Offset(dx1, dy1);
+    Offset p2 = Offset(dx2, dy2);
+    canvas.drawLine(p1, p2, linePaint);
   }
 
   int nextInteger(int min, int max) => min + math.Random().nextInt(max - min);
