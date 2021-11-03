@@ -126,7 +126,7 @@ class _RayBuilderState extends State<RayBuilder>
   @override
   Widget build(BuildContext context) {
     // final color = lineColors[nextInteger(0, lineColors.length)];
-    int noOfLines = 2;
+    int noOfLines = 4;
     return AnimatedBuilder(
         animation: _animation,
         builder: (BuildContext context, Widget child) {
@@ -182,6 +182,8 @@ class Raypainter extends CustomPainter {
     double centerX = size.width / 2.0;
     double centerY = size.height / 2.0;
     final double noOflines = 360 / angleX;
+    double x3, x4, y3, y4;
+    Offset p3, p4;
     for (int i = 0; i < noOflines; i++) {
       double angle = angleX.toRadian() * i;
       final double animationX = animation * (centerX);
@@ -192,11 +194,22 @@ class Raypainter extends CustomPainter {
       double y2 = (animationY + lineLength) * math.sin(angle);
       Offset p1 = Offset(centerX + x1, y1 + centerY);
       Offset p2 = Offset(centerX + x2, y2 + centerY);
+      linePaint.color = lineColors[i % lineColors.length];
       canvas.drawLine(p1, p2, linePaint);
       // TODO: add a line with a random gap
-      while (loop < 20) {
-        drawLine(p1, p2, angle, canvas, size, linePaint);
-        loop++;
+
+      double gap = 50;
+      for (int j = 0; j < 10; j++) {
+        gap = (j * 2 + 1) * 50.0;
+        x3 = (animationX - gap) * math.cos(angle);
+        y3 = (animationY - gap) * math.sin(angle);
+        x4 = (animationX - (gap + lineLength)) * math.cos(angle);
+        y4 = (animationY - (gap + lineLength)) * math.sin(angle);
+        p3 = Offset(centerX + x3, y3 + centerY);
+        p4 = Offset(centerX + x4, y4 + centerY);
+        linePaint.color = lineColors[i % lineColors.length];
+
+        canvas.drawLine(p3, p4, linePaint);
       }
     }
   }
