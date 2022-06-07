@@ -34,6 +34,12 @@ class _RippleEffectState extends State<RippleEffect>
     _animationController.forward();
   }
 
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
   double radius;
   @override
   Widget build(BuildContext context) {

@@ -9,14 +9,7 @@ class Sunshine extends StatefulWidget {
 class _SunshineState extends State<Sunshine> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.white,
-          leading: BackButton(
-            color: Colors.black,
-          ),
-        ),
-        body: RaysAnimator());
+    return Scaffold(body: RaysAnimator());
   }
 }
 
@@ -36,32 +29,29 @@ class RaysAnimatorState extends State<RaysAnimator> {
   int counter = 0;
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          Align(
-            alignment: Alignment.center,
-            child: RayBuilder(
-              numberOfAngles: raysCount, //angleDifference,
-            ),
+    return Stack(
+      children: [
+        Align(
+          alignment: Alignment.center,
+          child: RayBuilder(
+            numberOfAngles: raysCount, //angleDifference,
           ),
-          // Circle(),
-        ],
-      ),
-      floatingActionButton: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SizedBox(
-            width: 30,
-          ),
-          FloatingActionButton(
-              key: Key('increment'),
-              onPressed: _incrementCounter,
-              tooltip: 'ball Animation',
-              child: Icon(Icons.radio_button_checked)),
-        ],
-      ),
+        ),
+        // Circle(),
+      ],
     );
+    // floatingActionButton: Row(
+    //   mainAxisAlignment: MainAxisAlignment.center,
+    //   children: [
+    //     SizedBox(
+    //       width: 30,
+    //     ),
+    //     FloatingActionButton(
+    //         key: Key('increment'),
+    //         onPressed: _incrementCounter,
+    //         tooltip: 'ball Animation',
+    //         child: Icon(Icons.radio_button_checked)),
+    //   ],
   }
 }
 
@@ -132,7 +122,6 @@ class _RayBuilderState extends State<RayBuilder>
         builder: (BuildContext context, Widget child) {
           return Stack(
             children: [
-              // for (int i = 0; i < noOfLines; i++)
               CustomPaint(
                 child: Container(),
                 painter: Raypainter(
@@ -199,7 +188,8 @@ class Raypainter extends CustomPainter {
       // TODO: add a line with a random gap
 
       double gap = 50;
-      for (int j = 0; j < 10; j++) {
+      double linesCount = 50;
+      for (int j = 0; j < linesCount; j++) {
         gap = (j * 2 + 1) * 50.0;
         x3 = (animationX - gap) * math.cos(angle);
         y3 = (animationY - gap) * math.sin(angle);
@@ -208,36 +198,18 @@ class Raypainter extends CustomPainter {
         p3 = Offset(centerX + x3, y3 + centerY);
         p4 = Offset(centerX + x4, y4 + centerY);
         linePaint.color = lineColors[i % lineColors.length];
-
-        canvas.drawLine(p3, p4, linePaint);
       }
     }
   }
 
   int loop = 0;
-  void drawLine(Offset p1, Offset p2, double angle, Canvas canvas, Size size,
-      Paint paint) {
-    double radiusX = size.width / 2.0;
-    double radiusY = size.height / 2.0;
-    Paint linePaint = paint;
-    final double gap = 30.0 + lineLength;
-    final angleX = angle * 180 / math.pi;
-    double px1 = (p1.dx - gap) * math.cos(angleX);
-    double px2 = (p2.dx - gap) * math.cos(angleX);
-    double py1 = (p1.dy - gap) * math.sin(angleX);
-    double py2 = (p2.dy - gap) * math.sin(angleX);
-    Offset p3 = Offset(px1, radiusY + py1);
-    Offset p4 = Offset(px2, radiusY + py2);
-    canvas.drawLine(p3, p4, linePaint);
-    // while (loop < 20) {
-    //   loop += 1;
-    //   loop.isEven
-    //       ? linePaint.color = Colors.blue
-    //       : linePaint.color = Colors.red;
-    //   drawLine(Offset(p3.dx, p3.dy), Offset(p4.dx, p4.dy), angle, canvas, size,
-    //       linePaint);
-    // }
-  }
+  void drawLine(
+    Offset p1,
+    Offset p2,
+    double angle,
+    Canvas canvas,
+    Size size,
+  ) {}
 
   int nextInteger(int min, int max) => min + math.Random().nextInt(max - min);
 

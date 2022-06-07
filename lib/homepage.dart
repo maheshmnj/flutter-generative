@@ -1,10 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_generative/retro.dart';
-import 'package:flutter_generative/sunshine.dart';
-
-import 'package:flutter_generative/donut.dart';
-import 'package:flutter_generative/geometricspiro.dart';
-import 'package:flutter_generative/ripple.dart';
+import 'package:flutter_generative/art/art.dart';
 
 class ListWidget extends StatefulWidget {
   @override
@@ -15,14 +10,6 @@ class _ListWidgetState extends State<ListWidget> {
   Widget _artContainerWidget({Widget child}) {
     Container(height: MediaQuery.of(context).size.height / 2, child: child);
   }
-
-  Map<String, Widget> _list = {
-    "Donut": DonutsWidget(),
-    "Ripple": RippleEffect(),
-    "Spiro": GeometricSpiro(),
-    'Retro': RetroArt(),
-    'Sunshine': Sunshine(),
-  };
 
   Future<void> push(BuildContext context, Widget widget) async {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) => widget));
@@ -45,10 +32,48 @@ class _ListWidgetState extends State<ListWidget> {
                 final key = _list.keys.toList()[index];
                 return ListTile(
                   title: Text('$key'),
-                  onTap: () => push(context, _list[key]),
+                  onTap: () => push(
+                      context,
+                      ArtView(
+                        artKey: key,
+                      )),
                   trailing: Icon(Icons.arrow_forward_ios_outlined),
                 );
               },
             )));
+  }
+}
+
+Map<String, Widget> _list = {
+  "Donut": DonutsWidget(),
+  "Ripple": RippleEffect(),
+  "Spiro": GeometricSpiro(),
+  'Retro': RetroArt(),
+  'Sunshine': Sunshine(),
+};
+
+class ArtView extends StatelessWidget {
+  final String artKey;
+
+  const ArtView({Key key, @required this.artKey}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Stack(
+        children: [
+          _list[artKey],
+          Positioned(
+              top: 20,
+              right: 20,
+              child: IconButton(
+                icon: Icon(Icons.close, size: 32, color: Colors.grey),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              )),
+        ],
+      ),
+    );
   }
 }

@@ -38,6 +38,12 @@ class _DonutsWidgetState extends State<DonutsWidget>
   }
 
   @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
         body: TweenAnimationBuilder(
@@ -49,7 +55,7 @@ class _DonutsWidgetState extends State<DonutsWidget>
               return Transform.rotate(
                 angle: angle,
                 child: CustomPaint(
-                  painter: CanvasPainter(animation: animation),
+                  painter: DonutPainter(animation: animation),
                   child: Container(),
                 ),
               );
@@ -57,8 +63,8 @@ class _DonutsWidgetState extends State<DonutsWidget>
   }
 }
 
-class CanvasPainter extends CustomPainter {
-  CanvasPainter({this.animation});
+class DonutPainter extends CustomPainter {
+  DonutPainter({this.animation});
   Animation<Color> animation;
   @override
   @override

@@ -78,6 +78,13 @@ class _RetroArtState extends State<RetroArt>
     return lineColors[index % lineColors.length];
   }
 
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    _animationController.dispose();
+    super.dispose();
+  }
+
   int linesCount = 8;
   int factor = 1;
   bool toggle = false;
