@@ -72,7 +72,7 @@ class CanvasPainter extends CustomPainter {
     int sides = 80;
     for (int i = 0; i < sides; i++) {
       paint..color = animation.value;
-      double angle = (2 * math.pi) * i / 80;
+      double angle = (2 * math.pi) * i / sides;
       Offset center = Offset(100 * math.cos(angle), 100 * math.sin(angle));
       canvas.drawCircle(c + center, 100, paint);
     }
