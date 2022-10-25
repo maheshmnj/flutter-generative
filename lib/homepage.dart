@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_generative/art/art.dart';
+import 'package:flutter_generative/art/fireworks.dart';
 
 class ListWidget extends StatefulWidget {
   @override
@@ -50,6 +51,7 @@ Map<String, Widget> _list = {
   "Spiro": GeometricSpiro(),
   'Retro': RetroArt(),
   'Sunshine': Sunshine(),
+  'FireWorks': Fireworks(),
 };
 
 class ArtView extends StatelessWidget {

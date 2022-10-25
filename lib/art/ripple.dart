@@ -62,7 +62,7 @@ class _RippleEffectState extends State<RippleEffect>
 class RipplePainter extends CustomPainter {
   RipplePainter({this.radius});
   double radius;
-  @override
+  
   @override
   void paint(Canvas canvas, Size size) {
     // TODO: implement paint
