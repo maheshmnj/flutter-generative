@@ -17,13 +17,11 @@ class _FireworksState extends State<Fireworks>
   void initState() {
     super.initState();
     controller = AnimationController(
-      duration: const Duration(seconds: 1),
+      duration: const Duration(seconds: 2),
       vsync: this,
     );
+    generateParticels();
     controller.repeat();
-    controller.addListener(() {
-      setState(() {});
-    });
   }
 
   @override
@@ -34,28 +32,36 @@ class _FireworksState extends State<Fireworks>
 
   List<Particle> _particles = [];
 
+  void generateParticels() {
+    final random = Random();
+    final dx = random.nextDouble() * size.width - 100;
+    final dy = random.nextDouble() * size.height - 100;
+    Future.delayed(Duration(milliseconds: 1500), () {
+      _particles.clear();
+      for (int i = 0; i < 200; i++) {
+        final angle = Random().nextDouble() * 2 * pi;
+        final speed = Random().nextDouble() * 8;
+        _particles.add(Particle(dx, dy, cos(angle) * speed, -sin(angle) * speed,
+            2, Colors.accents[Random().nextInt(Colors.accents.length)]));
+      }
+      generateParticels();
+    });
+  }
+
+  Size size = Size.zero;
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onPanDown: (details) {
-        print('tapped');
-        for (int i = 0; i < 100; i++) {
-          _particles.add(Particle(
-              details.localPosition.dx,
-              details.localPosition.dy,
-              (Random().nextDouble() - 0.5) * 10,
-              (Random().nextDouble() - 0.5) * 10,
-              2,
-              Color((Random().nextDouble() * 0xFFFFFF).toInt())
-                  .withOpacity(1.0)));
-        }
+    size = MediaQuery.of(context).size;
+    return AnimatedBuilder(
+      animation: controller,
+      builder: (context, child) {
+        return CustomPaint(
+          painter: FireWorksPainter(
+            particles: _particles,
+          ),
+          child: Container(),
+        );
       },
-      child: CustomPaint(
-        painter: FireWorksPainter(
-          particles: _particles,
-        ),
-        child: Container(),
-      ),
     );
   }
 }
