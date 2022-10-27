@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -9,9 +10,10 @@ class Fireworks extends StatefulWidget {
   State<Fireworks> createState() => _FireworksState();
 }
 
-class _FireworksState extends State<Fireworks>
-    with SingleTickerProviderStateMixin {
+class _FireworksState extends State<Fireworks> with TickerProviderStateMixin {
   AnimationController controller;
+  Animation animation;
+  Animation animation2;
 
   @override
   void initState() {
@@ -20,7 +22,12 @@ class _FireworksState extends State<Fireworks>
       duration: const Duration(seconds: 2),
       vsync: this,
     );
-    generateParticels();
+
+    animation = CurvedAnimation(
+        parent: controller, curve: Interval(0.0, 0.6, curve: GravityCurve()));
+    animation2 = CurvedAnimation(
+        parent: controller, curve: Interval(0.6, 1.0, curve: GravityCurve()));
+    generateParticles(isRecursive: true);
     controller.repeat();
   }
 
@@ -31,20 +38,48 @@ class _FireworksState extends State<Fireworks>
   }
 
   List<Particle> _particles = [];
+  List<Particle> _particles2 = [];
 
-  void generateParticels() {
+  List<Color> fireColors = [
+    Colors.red,
+    Colors.orange,
+    Colors.yellow,
+    Colors.green,
+    Colors.blue,
+    Colors.purple,
+  ];
+  void generateParticles({bool isRecursive = false, double x, double y}) {
     final random = Random();
-    final dx = random.nextDouble() * size.width - 100;
-    final dy = random.nextDouble() * size.height - 100;
-    Future.delayed(Duration(milliseconds: 1500), () {
+    final dx = x ?? random.nextDouble() * size.width / 2;
+    final dx2 = x ?? random.nextDouble() * size.width / 2;
+    final dy = y ?? random.nextDouble() * size.height / 2;
+    final dy2 = y ?? random.nextDouble() * size.height / 2;
+    Future.delayed(Duration(milliseconds: 1500), () async {
       _particles.clear();
+      _particles2.clear();
       for (int i = 0; i < 200; i++) {
         final angle = Random().nextDouble() * 2 * pi;
         final speed = Random().nextDouble() * 8;
+        final radius = Random().nextDouble() * 10;
         _particles.add(Particle(dx, dy, cos(angle) * speed, -sin(angle) * speed,
-            2, Colors.accents[Random().nextInt(Colors.accents.length)]));
+            radius, fireColors[Random().nextInt(fireColors.length)]));
       }
-      generateParticels();
+      await Future.delayed(Duration(milliseconds: Random().nextInt(5000)));
+      for (int i = 0; i < 200; i++) {
+        final angle2 = Random().nextDouble() * 2 * pi;
+        final speed2 = Random().nextDouble() * 8;
+        final radius2 = Random().nextDouble() * 10;
+        _particles2.add(Particle(
+            dx2,
+            dy2,
+            cos(angle2) * speed2,
+            -sin(angle2) * speed2,
+            radius2,
+            fireColors[Random().nextInt(fireColors.length)]));
+      }
+      if (isRecursive) {
+        generateParticles(isRecursive: true);
+      }
     });
   }
 
@@ -52,17 +87,53 @@ class _FireworksState extends State<Fireworks>
   @override
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
-    return AnimatedBuilder(
-      animation: controller,
-      builder: (context, child) {
-        return CustomPaint(
-          painter: FireWorksPainter(
-            particles: _particles,
+    return Stack(
+      children: [
+        GestureDetector(
+          onPanDown: (details) {
+            final x = details.localPosition.dx;
+            final y = details.localPosition.dy;
+            generateParticles(isRecursive: false, x: x, y: y);
+          },
+          child: AnimatedBuilder(
+            animation: animation,
+            builder: (context, child) {
+              return CustomPaint(
+                painter: FireWorksPainter(
+                  particles: _particles,
+                ),
+                child: Center(
+                  child: Text(
+                    'Happy Diwali',
+                    style: Theme.of(context)
+                        .textTheme
+                        .headline1
+                        .copyWith(color: Colors.black),
+                  ),
+                ),
+              );
+            },
           ),
-          child: Container(),
-        );
-      },
+        ),
+        AnimatedBuilder(
+          animation: animation2,
+          builder: (context, child) {
+            return CustomPaint(
+                painter: FireWorksPainter(
+                  particles: _particles2,
+                ),
+                child: Container());
+          },
+        ),
+      ],
     );
+  }
+}
+
+class GravityCurve extends Curve {
+  @override
+  double transformInternal(double t) {
+    return sin((pi / 4) * t);
   }
 }
 
