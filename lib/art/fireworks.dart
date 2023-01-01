@@ -33,6 +33,7 @@ class _FireworksState extends State<Fireworks> with TickerProviderStateMixin {
   @override
   void dispose() {
     controller.dispose();
+    _controller.dispose();
     super.dispose();
   }
 
@@ -82,6 +83,8 @@ class _FireworksState extends State<Fireworks> with TickerProviderStateMixin {
     });
   }
 
+  final TextEditingController _controller = TextEditingController();
+
   Size size = Size.zero;
   @override
   Widget build(BuildContext context) {
@@ -101,13 +104,6 @@ class _FireworksState extends State<Fireworks> with TickerProviderStateMixin {
                 painter: FireWorksPainter(
                   particles: _particles,
                 ),
-                child: Center(
-                  child: Text(
-                    'Happy Diwali',
-                    style: Theme.of(context).textTheme.headline1!.copyWith(
-                        color: Colors.black, fontWeight: FontWeight.normal),
-                  ),
-                ),
               );
             },
           ),
@@ -122,6 +118,22 @@ class _FireworksState extends State<Fireworks> with TickerProviderStateMixin {
                 child: Container());
           },
         ),
+        Align(
+          alignment: Alignment.center,
+          child: TextField(
+              controller: _controller,
+              maxLines: 3,
+              textAlign: TextAlign.center,
+              style: Theme.of(context)
+                  .textTheme
+                  .headline1!
+                  .copyWith(color: Colors.black, fontWeight: FontWeight.normal),
+              cursorWidth: 5,
+              decoration: InputDecoration(
+                hintText: 'lets go...',
+                border: InputBorder.none,
+              )),
+        )
       ],
     );
   }
