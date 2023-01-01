@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_generative/art/art.dart';
 import 'package:flutter_generative/art/fireworks.dart';
+import 'package:flutter_generative/extensions.dart';
 
 class ListWidget extends StatefulWidget {
   @override
@@ -8,8 +9,8 @@ class ListWidget extends StatefulWidget {
 }
 
 class _ListWidgetState extends State<ListWidget> {
-  Future<void> push(BuildContext context, Widget widget) async {
-    Navigator.of(context).push(MaterialPageRoute(builder: (context) => widget));
+  Future<void> push(BuildContext context, String routeName) async {
+    Navigator.of(context).pushNamed(routeName);
   }
 
   @override
@@ -26,14 +27,11 @@ class _ListWidgetState extends State<ListWidget> {
                 if (index == itemCount - 1) {
                   return Divider(height: 1);
                 }
-                final key = _list.keys.toList()[index];
+                final routeName = _list.keys.elementAt(index);
                 return ListTile(
-                  title: Text('$key'),
-                  onTap: () => push(
-                      context,
-                      ArtView(
-                        artKey: key,
-                      )),
+                  title: Text(routeToTitle(routeName)!,
+                      style: TextStyle(fontSize: 20)),
+                  onTap: () => push(context, routeName),
                   trailing: Icon(Icons.arrow_forward_ios_outlined),
                 );
               },
@@ -41,13 +39,17 @@ class _ListWidgetState extends State<ListWidget> {
   }
 }
 
+String? routeToTitle(String routeName) {
+  return routeName.substring(1).capitalize();
+}
+
 Map<String, Widget> _list = {
-  "Donut": DonutsWidget(),
-  "Ripple": RippleEffect(),
-  "Spiro": GeometricSpiro(),
-  'Retro': RetroArt(),
-  'Sunshine': Sunshine(),
-  'FireWorks': Fireworks(),
+  "/donut": DonutsWidget(),
+  "/ripple": RippleEffect(),
+  "/spiro": GeometricSpiro(),
+  '/retro': RetroArt(),
+  '/sunshine': Sunshine(),
+  '/fireworks': Fireworks(),
 };
 
 class ArtView extends StatelessWidget {

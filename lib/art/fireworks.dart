@@ -89,52 +89,52 @@ class _FireworksState extends State<Fireworks> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
-    return Stack(
-      children: [
-        GestureDetector(
-          onPanDown: (details) {
-            final x = details.localPosition.dx;
-            final y = details.localPosition.dy;
-            generateParticles(isRecursive: false, x: x, y: y);
-          },
-          child: AnimatedBuilder(
-            animation: animation,
+    return Material(
+      child: Stack(
+        children: [
+          GestureDetector(
+            onPanDown: (details) {
+              final x = details.localPosition.dx;
+              final y = details.localPosition.dy;
+              generateParticles(isRecursive: false, x: x, y: y);
+            },
+            child: AnimatedBuilder(
+              animation: animation,
+              builder: (context, child) {
+                return CustomPaint(
+                  painter: FireWorksPainter(
+                    particles: _particles,
+                  ),
+                );
+              },
+            ),
+          ),
+          AnimatedBuilder(
+            animation: animation2,
             builder: (context, child) {
               return CustomPaint(
-                painter: FireWorksPainter(
-                  particles: _particles,
-                ),
-              );
+                  painter: FireWorksPainter(
+                    particles: _particles2,
+                  ),
+                  child: Container());
             },
           ),
-        ),
-        AnimatedBuilder(
-          animation: animation2,
-          builder: (context, child) {
-            return CustomPaint(
-                painter: FireWorksPainter(
-                  particles: _particles2,
-                ),
-                child: Container());
-          },
-        ),
-        Align(
-          alignment: Alignment.center,
-          child: TextField(
-              controller: _controller,
-              maxLines: 3,
-              textAlign: TextAlign.center,
-              style: Theme.of(context)
-                  .textTheme
-                  .headline1!
-                  .copyWith(color: Colors.black, fontWeight: FontWeight.normal),
-              cursorWidth: 5,
-              decoration: InputDecoration(
-                hintText: 'lets go...',
-                border: InputBorder.none,
-              )),
-        )
-      ],
+          Align(
+            alignment: Alignment.center,
+            child: TextField(
+                controller: _controller,
+                maxLines: 3,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.headline1!.copyWith(
+                    color: Colors.black, fontWeight: FontWeight.normal),
+                cursorWidth: 5,
+                decoration: InputDecoration(
+                  hintText: 'lets go...',
+                  border: InputBorder.none,
+                )),
+          )
+        ],
+      ),
     );
   }
 }

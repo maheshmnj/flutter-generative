@@ -23,7 +23,10 @@ class MyApp extends StatelessWidget {
         '/': (context) => ListWidget(),
         '/sunshine': (context) => Sunshine(),
         '/fireworks': (context) => Fireworks(),
-        '/ripple': (context) => RippleEffect()
+        '/ripple': (context) => RippleEffect(),
+        '/retro': (context) => RetroArt(),
+        '/donut': (context) => DonutsWidget(),
+        '/spiro': (context) => GeometricSpiro(),
       },
       // home: ListWidget(),
     );
