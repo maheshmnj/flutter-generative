@@ -9,8 +9,8 @@ class RetroArt extends StatefulWidget {
 
 class _RetroArtState extends State<RetroArt>
     with SingleTickerProviderStateMixin {
-  AnimationController _animationController;
-  Animation<double> animation;
+  late AnimationController _animationController;
+  late Animation<double> animation;
   @override
   void initState() {
     // TODO: implement initState
@@ -40,12 +40,12 @@ class _RetroArtState extends State<RetroArt>
 
   int getFactor(int index) {
     int i = 0;
-    int result = pow(2, i);
+    num result = pow(2, i);
     while (index > result) {
       i++;
       result = pow(2, i);
     }
-    return result;
+    return result.toInt();
   }
 
   double rotateAngle(int index) {
@@ -63,7 +63,7 @@ class _RetroArtState extends State<RetroArt>
     }
   }
 
-  List<Color> lineColors = [
+  List<Color?> lineColors = [
     Colors.blue[100],
     Colors.green[100],
     Colors.pink[100],
@@ -73,7 +73,7 @@ class _RetroArtState extends State<RetroArt>
     Colors.red[100],
   ];
 
-  Color getColor(int index) {
+  Color? getColor(int index) {
     // int index = Random().nextInt(lineColors.length%);
     return lineColors[index % lineColors.length];
   }
@@ -99,12 +99,12 @@ class _RetroArtState extends State<RetroArt>
             for (int i = 1; i < 20; i++)
               AnimatedBuilder(
                 animation: _animationController,
-                builder: (_, Widget child) => RetroWheel(
+                builder: (BuildContext context, Widget? child) => RetroWheel(
                   lines: getFactor(i) * 8,
                   innerRadius: i != 1 ? 40.0 * (i - 1) : 20,
                   outerRadius: 40.0 * (i),
                   angle: rotateAngle(i),
-                  color: getColor(i),
+                  color: getColor(i)!,
                 ),
               )
           ],
@@ -120,12 +120,12 @@ class RetroWheel extends StatefulWidget {
   final Color color;
 
   const RetroWheel(
-      {Key key,
-      this.lines,
-      this.innerRadius,
-      this.outerRadius,
-      this.angle,
-      this.color})
+      {Key? key,
+      required this.lines,
+      required this.innerRadius,
+      required this.outerRadius,
+      required this.angle,
+      required this.color})
       : super(key: key);
   @override
   _RetroWheelState createState() => _RetroWheelState();

@@ -8,10 +8,6 @@ class ListWidget extends StatefulWidget {
 }
 
 class _ListWidgetState extends State<ListWidget> {
-  Widget _artContainerWidget({Widget child}) {
-    Container(height: MediaQuery.of(context).size.height / 2, child: child);
-  }
-
   Future<void> push(BuildContext context, Widget widget) async {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) => widget));
   }
@@ -57,14 +53,14 @@ Map<String, Widget> _list = {
 class ArtView extends StatelessWidget {
   final String artKey;
 
-  const ArtView({Key key, @required this.artKey}) : super(key: key);
+  const ArtView({Key? key, required this.artKey}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
         children: [
-          _list[artKey],
+          _list[artKey]!,
           Positioned(
               top: 20,
               right: 20,

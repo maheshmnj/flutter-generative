@@ -8,8 +8,8 @@ class GeometricSpiro extends StatefulWidget {
 
 class _GeometricSpiroState extends State<GeometricSpiro>
     with SingleTickerProviderStateMixin {
-  AnimationController _animationController;
-  Animation<Color> animation;
+  late AnimationController _animationController;
+  late Animation<Color> animation;
 
   @override
   void initState() {
@@ -57,7 +57,7 @@ class _GeometricSpiroState extends State<GeometricSpiro>
 
 class CanvasPainter extends CustomPainter {
   CanvasPainter({this.animation});
-  Animation<Color> animation;
+  Animation<Color>? animation;
   @override
   @override
   void paint(Canvas canvas, Size size) {

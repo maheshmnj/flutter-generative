@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_generative/art/art.dart';
+import 'package:flutter_generative/art/fireworks.dart';
 
 import 'homepage.dart';
 
@@ -17,7 +19,13 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: ListWidget(),
+      routes: {
+        '/': (context) => ListWidget(),
+        '/sunshine': (context) => Sunshine(),
+        '/fireworks': (context) => Fireworks(),
+        '/ripple': (context) => RippleEffect()
+      },
+      // home: ListWidget(),
     );
   }
 }

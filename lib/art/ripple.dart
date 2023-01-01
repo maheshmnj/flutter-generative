@@ -12,7 +12,7 @@ class RippleEffect extends StatefulWidget {
 
 class _RippleEffectState extends State<RippleEffect>
     with SingleTickerProviderStateMixin {
-  AnimationController _animationController;
+  late AnimationController _animationController;
   @override
   void initState() {
     // TODO: implement initState
@@ -40,7 +40,7 @@ class _RippleEffectState extends State<RippleEffect>
     super.dispose();
   }
 
-  double radius;
+  double? radius;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,9 +60,9 @@ class _RippleEffectState extends State<RippleEffect>
 
 /**https://medium.com/flutter-community/flutter-custom-painter-circular-wave-animation-bdc65c112690 */
 class RipplePainter extends CustomPainter {
-  RipplePainter({this.radius});
+  RipplePainter({required this.radius});
   double radius;
-  
+
   @override
   void paint(Canvas canvas, Size size) {
     // TODO: implement paint

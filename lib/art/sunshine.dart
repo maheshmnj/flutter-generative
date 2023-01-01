@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 class Sunshine extends StatefulWidget {
@@ -69,7 +70,7 @@ List<Color> lineColors = [
 class RayBuilder extends StatefulWidget {
   final int numberOfAngles;
 
-  const RayBuilder({Key key, this.numberOfAngles}) : super(key: key);
+  const RayBuilder({Key? key, required this.numberOfAngles}) : super(key: key);
 
   @override
   _RayBuilderState createState() => _RayBuilderState();
@@ -77,8 +78,8 @@ class RayBuilder extends StatefulWidget {
 
 class _RayBuilderState extends State<RayBuilder>
     with SingleTickerProviderStateMixin {
-  AnimationController _animationController;
-  Animation<double> _animation;
+  late AnimationController _animationController;
+  late Animation<double> _animation;
   @override
   void initState() {
     // TODO: implement initState
@@ -119,7 +120,7 @@ class _RayBuilderState extends State<RayBuilder>
     int noOfLines = 4;
     return AnimatedBuilder(
         animation: _animation,
-        builder: (BuildContext context, Widget child) {
+        builder: (BuildContext context, Widget? child) {
           return Stack(
             children: [
               CustomPaint(
@@ -144,8 +145,8 @@ class Raypainter extends CustomPainter {
   final Color color;
 
   Raypainter({
-    this.animation,
-    this.angleX,
+    required this.animation,
+    required this.angleX,
     this.color = Colors.red,
     this.radius = 200,
     this.lineLength = 50,
@@ -236,7 +237,7 @@ class CirclePainter extends CustomPainter {
     // TODO: implement paint
     Paint paint = Paint()
       ..strokeWidth = 10.0
-      ..color = Colors.brown[900]
+      ..color = Colors.brown[900]!
       ..style = PaintingStyle.stroke;
 
     double centerX = size.width / 2.0;

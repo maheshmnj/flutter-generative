@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart';
 import 'dart:math' as math;
+
+import 'package:flutter/material.dart';
 
 class DonutsWidget extends StatefulWidget {
   @override
@@ -8,8 +9,8 @@ class DonutsWidget extends StatefulWidget {
 
 class _DonutsWidgetState extends State<DonutsWidget>
     with SingleTickerProviderStateMixin {
-  AnimationController _animationController;
-  Animation<Color> animation;
+  late AnimationController _animationController;
+  late Animation<Color?> animation;
 
   @override
   void initState() {
@@ -64,8 +65,8 @@ class _DonutsWidgetState extends State<DonutsWidget>
 }
 
 class DonutPainter extends CustomPainter {
-  DonutPainter({this.animation});
-  Animation<Color> animation;
+  DonutPainter({required this.animation});
+  Animation<Color?> animation;
   @override
   @override
   void paint(Canvas canvas, Size size) {
@@ -77,7 +78,7 @@ class DonutPainter extends CustomPainter {
     final c = size.center(Offset.zero);
     int sides = 80;
     for (int i = 0; i < sides; i++) {
-      paint..color = animation.value;
+      paint..color = animation.value!;
       double angle = (2 * math.pi) * i / sides;
       Offset center = Offset(100 * math.cos(angle), 100 * math.sin(angle));
       canvas.drawCircle(c + center, 100, paint);

@@ -1,19 +1,18 @@
-import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
 
 class Fireworks extends StatefulWidget {
-  const Fireworks({Key key}) : super(key: key);
+  const Fireworks({Key? key}) : super(key: key);
 
   @override
   State<Fireworks> createState() => _FireworksState();
 }
 
 class _FireworksState extends State<Fireworks> with TickerProviderStateMixin {
-  AnimationController controller;
-  Animation animation;
-  Animation animation2;
+  late AnimationController controller;
+  late Animation animation;
+  late Animation animation2;
 
   @override
   void initState() {
@@ -48,7 +47,7 @@ class _FireworksState extends State<Fireworks> with TickerProviderStateMixin {
     Colors.blue,
     Colors.purple,
   ];
-  void generateParticles({bool isRecursive = false, double x, double y}) {
+  void generateParticles({bool isRecursive = false, double? x, double? y}) {
     final random = Random();
     final dx = x ?? random.nextDouble() * size.width / 2;
     final dx2 = x ?? random.nextDouble() * size.width / 2;
@@ -105,10 +104,8 @@ class _FireworksState extends State<Fireworks> with TickerProviderStateMixin {
                 child: Center(
                   child: Text(
                     'Happy Diwali',
-                    style: Theme.of(context)
-                        .textTheme
-                        .headline1
-                        .copyWith(color: Colors.black),
+                    style: Theme.of(context).textTheme.headline1!.copyWith(
+                        color: Colors.black, fontWeight: FontWeight.normal),
                   ),
                 ),
               );
@@ -149,7 +146,7 @@ class Particle {
 
 class FireWorksPainter extends CustomPainter {
   List<Particle> particles;
-  FireWorksPainter({this.particles});
+  FireWorksPainter({required this.particles});
 
   // burst with delay
   void burst(Canvas canvas, Size size) {
