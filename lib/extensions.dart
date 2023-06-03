@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -186,4 +188,10 @@ extension SizedBoxSpacer on double {
   SizedBox vSpacer() => SizedBox(height: this);
 
   SizedBox hSpacer() => SizedBox(width: this);
+}
+
+extension OffsetExtension on Offset {
+  double distanceTo(Offset other) {
+    return sqrt(pow(this.dx - other.dx, 2) + pow(this.dy - other.dy, 2));
+  }
 }
