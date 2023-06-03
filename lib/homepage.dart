@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_generative/art/art.dart';
-import 'package:flutter_generative/art/fireworks.dart';
 import 'package:flutter_generative/extensions.dart';
+import 'package:flutter_generative/main.dart';
 
 class ListWidget extends StatefulWidget {
   @override
@@ -15,19 +14,19 @@ class _ListWidgetState extends State<ListWidget> {
 
   @override
   Widget build(BuildContext context) {
-    int itemCount = _list.length + 1;
+    int itemCount = routes.length + 1;
     return Scaffold(
         body: Container(
             height: MediaQuery.of(context).size.height,
             child: ListView.separated(
-              itemCount: _list.length + 1,
+              itemCount: routes.length + 1,
               separatorBuilder: (BuildContext context, int index) =>
                   Divider(height: 1),
               itemBuilder: (BuildContext context, int index) {
                 if (index == itemCount - 1) {
                   return Divider(height: 1);
                 }
-                final routeName = _list.keys.elementAt(index);
+                final routeName = routes.keys.elementAt(index);
                 return ListTile(
                   title: Text(routeToTitle(routeName)!,
                       style: TextStyle(fontSize: 20)),
@@ -41,39 +40,4 @@ class _ListWidgetState extends State<ListWidget> {
 
 String? routeToTitle(String routeName) {
   return routeName.substring(1).capitalize();
-}
-
-Map<String, Widget> _list = {
-  "/donut": DonutsWidget(),
-  "/ripple": RippleEffect(),
-  "/spiro": GeometricSpiro(),
-  '/retro': RetroArt(),
-  '/sunshine': Sunshine(),
-  '/fireworks': Fireworks(),
-};
-
-class ArtView extends StatelessWidget {
-  final String artKey;
-
-  const ArtView({Key? key, required this.artKey}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          _list[artKey]!,
-          Positioned(
-              top: 20,
-              right: 20,
-              child: IconButton(
-                icon: Icon(Icons.close, size: 32, color: Colors.grey),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              )),
-        ],
-      ),
-    );
-  }
 }

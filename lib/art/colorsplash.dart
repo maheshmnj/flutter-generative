@@ -2,14 +2,14 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 
-class Fireworks extends StatefulWidget {
-  const Fireworks({Key? key}) : super(key: key);
+class ColorBlast extends StatefulWidget {
+  const ColorBlast({Key? key}) : super(key: key);
 
   @override
-  State<Fireworks> createState() => _FireworksState();
+  State<ColorBlast> createState() => _ColorBlastState();
 }
 
-class _FireworksState extends State<Fireworks> with TickerProviderStateMixin {
+class _ColorBlastState extends State<ColorBlast> with TickerProviderStateMixin {
   late AnimationController controller;
   late Animation animation;
   late Animation animation2;
@@ -102,7 +102,7 @@ class _FireworksState extends State<Fireworks> with TickerProviderStateMixin {
               animation: animation,
               builder: (context, child) {
                 return CustomPaint(
-                  painter: FireWorksPainter(
+                  painter: ColorBlastPainter(
                     particles: _particles,
                   ),
                 );
@@ -113,7 +113,7 @@ class _FireworksState extends State<Fireworks> with TickerProviderStateMixin {
             animation: animation2,
             builder: (context, child) {
               return CustomPaint(
-                  painter: FireWorksPainter(
+                  painter: ColorBlastPainter(
                     particles: _particles2,
                   ),
                   child: Container());
@@ -156,9 +156,9 @@ class Particle {
   Particle(this.x, this.y, this.vx, this.vy, this.radius, this.color);
 }
 
-class FireWorksPainter extends CustomPainter {
+class ColorBlastPainter extends CustomPainter {
   List<Particle> particles;
-  FireWorksPainter({required this.particles});
+  ColorBlastPainter({required this.particles});
 
   // burst with delay
   void burst(Canvas canvas, Size size) {
