@@ -5,10 +5,12 @@ import 'package:flutter/material.dart';
 
 class _LolliPopPainter extends CustomPainter {
   double size;
-  _LolliPopPainter(this.size);
+  final Animation<double> animation;
+  _LolliPopPainter(this.size, this.animation);
   @override
   void paint(Canvas canvas, Size size) {
-    final center = Offset(size.width / 2, size.height / 3);
+    Offset center = Offset(size.width / 2, size.height / 3);
+    center += Offset(center.dx, center.dy - animation.value);
     double candySize = this.size;
     stick(canvas, size, Offset(center.dx, center.dy + candySize / 1),
         length: candySize);
@@ -109,8 +111,29 @@ class LolliPop extends StatefulWidget {
   State<LolliPop> createState() => _LolliPopState();
 }
 
-class _LolliPopState extends State<LolliPop> {
+class _LolliPopState extends State<LolliPop>
+    with SingleTickerProviderStateMixin {
   double size = 100.0;
+
+  late AnimationController _controller;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller =
+        AnimationController(vsync: this, duration: const Duration(seconds: 2));
+    _animation = Tween<double>(begin: 100, end: 400).animate(
+        CurvedAnimation(parent: _controller, curve: Curves.fastOutSlowIn));
+    _controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -119,11 +142,15 @@ class _LolliPopState extends State<LolliPop> {
           color: Colors.blue.shade100,
         ),
         Align(
-            alignment: Alignment.center,
-            child: CustomPaint(
-              painter: _LolliPopPainter(
-                  size), // Replace with your own custom painter
-            )),
+            alignment: Alignment.bottomCenter,
+            child: AnimatedBuilder(
+                animation: _controller,
+                builder: (context, child) {
+                  return CustomPaint(
+                    painter: _LolliPopPainter(size,
+                        _animation), // Replace with your own custom painter
+                  );
+                })),
         Align(
             alignment: Alignment.topCenter,
             child: Card(
