@@ -12,9 +12,15 @@ class _LolliPopPainter extends CustomPainter {
     Offset center = Offset(size.width / 2, size.height / 3);
     center += Offset(center.dx, center.dy - animation.value);
     double candySize = this.size;
-    stick(canvas, size, Offset(center.dx, center.dy + candySize / 1),
+    double _distance = candySize / 2 + 20;
+    stick(canvas, size, Offset(center.dx - _distance, center.dy + candySize),
         length: candySize);
-    paintLolliPop(canvas, size, center, radius: candySize);
+    spiralLollipop(canvas, size, center + Offset(center.dx - _distance, 0),
+        startRadius: 10, endRadius: candySize);
+    stick(canvas, size, Offset(center.dx + _distance, center.dy + candySize),
+        length: candySize);
+    paintLolliPop(canvas, size, center + Offset(center.dx + _distance, 0),
+        radius: candySize);
   }
 
   // draw lollipop stick
@@ -35,36 +41,40 @@ class _LolliPopPainter extends CustomPainter {
   }
 
   void spiralLollipop(Canvas canvas, Size size, Offset offset,
-      {double radius = 100.0}) {
+      {double startRadius = 10.0, double endRadius = 100.0}) {
     // draw a spiral from the center
     final spiralPaint = Paint()
       ..color = Colors.pink
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.0;
-
+      ..strokeWidth = 3.0;
+    Paint backgroundPaint = Paint()
+      ..color = Colors.white
+      ..style = PaintingStyle.fill;
+    canvas.drawCircle(offset, endRadius / 2, backgroundPaint);
     final spiralPath = Path();
+    spiralPaint..maskFilter = MaskFilter.blur(BlurStyle.outer, 12);
     spiralPath.moveTo(offset.dx, offset.dy);
     double angle = 0;
-    double spiralRadius = radius;
-    double spiralRadiusIncrement = 0.01;
+    double spiralRadius = 0;
+    double spiralRadiusIncrement = 0.00;
     // double spiralWidth = 0.5;
     // double spiralWidthIncrement = 0.05;
-    List<Pair> layers = [];
-    while (angle < 12 * pi) {
+    while (spiralRadius <= endRadius / 2) {
       // spiralPaint.strokeWidth = spiralWidth;
-      spiralRadius += spiralRadiusIncrement;
+      spiralRadiusIncrement += 0.0003;
       final spiralPoint = Offset(
           offset.dx + spiralRadius * cos(angle),
           offset.dy +
               spiralRadius * sin(angle) +
               spiralRadiusIncrement * angle / (2 * pi));
       spiralPath.lineTo(spiralPoint.dx, spiralPoint.dy);
-      angle += 0.1;
-      layers.add(Pair(spiralPath, spiralPaint));
+      angle += 0.04;
+      spiralRadius += spiralRadiusIncrement;
     }
-    for (int i = layers.length - 1; i >= 0; i--) {
-      canvas.drawPath(layers[i].path, layers[i].paint);
-    }
+
+    canvas.drawPath(spiralPath, spiralPaint);
+    // canvas.drawPath(layers[i].path, layers[i].paint);
+    // for (int i = layers.length - 1; i >= 0; i--) {}
   }
 
   void paintLolliPop(Canvas canvas, Size size, Offset offset,
