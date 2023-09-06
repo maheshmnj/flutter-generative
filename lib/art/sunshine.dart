@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 class Sunshine extends StatefulWidget {
+  static const routeName = '/sunshine';
   @override
   _SunshineState createState() => _SunshineState();
 }
@@ -157,7 +158,6 @@ class Raypainter extends CustomPainter {
     double newRange = max - min;
     double oldRange = 1.0 - 0.0;
     double transformedValue = (((value - 0.0) * newRange) / oldRange) + min;
-    print(transformedValue);
     return transformedValue;
   }
 
