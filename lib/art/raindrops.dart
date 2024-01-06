@@ -1,147 +1,110 @@
 import 'dart:math';
+
 import 'package:flutter/material.dart';
 
-class RainDrops extends StatefulWidget {
-  static final route = '/rain';
-  const RainDrops({Key? key}) : super(key: key);
+class Raindrop {
+  double x;
+  double y;
+  double size;
+  double speed;
 
-  @override
-  State<RainDrops> createState() => _RainDropsState();
+  Raindrop(this.x, this.y, this.size, this.speed);
 }
 
-class _RainDropsState extends State<RainDrops>
-    with SingleTickerProviderStateMixin {
-  late AnimationController controller;
+class RainAnimation extends StatefulWidget {
+  static final route = '/rain';
+  const RainAnimation({Key? key}) : super(key: key);
+  @override
+  _RainAnimationState createState() => _RainAnimationState();
+}
+
+class _RainAnimationState extends State<RainAnimation>
+    with TickerProviderStateMixin {
+  List<Raindrop> raindrops = [];
+  late AnimationController _controller;
 
   @override
   void initState() {
     super.initState();
-    controller = AnimationController(
+
+    _controller = AnimationController(
       vsync: this,
-      duration: Duration(seconds: 5),
+      duration: Duration(seconds: 8),
     );
-    initializeDrops();
-    _addListeners();
-    controller.repeat();
-  }
 
-  void _addListeners() {
-    controller.addListener(() {});
+    _controller.repeat();
 
-    controller.addStatusListener((status) {
-      if (status == AnimationStatus.completed) {}
+    _controller.addListener(() {
+      updateRaindrops(_controller.value);
     });
-  }
-
-  List<Drop> initializeDrops() {
-    final random = Random();
-
-    for (int i = 0; i < 100; i++) {
-      final startX = random.nextDouble() * 400;
-      final startY = random.nextDouble() * 100;
-      final endX = startX;
-      final endY = startY + 800;
-      final speed = random.nextInt(10) + 1; // Ensure speed is not zero
-      final duration = Duration(seconds: 5);
-
-      final animation = Tween<Offset>(
-        begin: Offset(startX, startY),
-        end: Offset(endX, endY),
-      ).animate(controller);
-
-      final drop = Drop(
-        speed: speed,
-        duration: duration,
-        start: Offset(startX, startY),
-        end: Offset(endX, endY),
-        controller: controller,
-        animation: animation,
-      );
-
-      drops.add(drop);
-    }
-
-    return drops;
-  }
-
-  List<Drop> drops = [];
-
-  @override
-  void dispose() {
-    controller.dispose();
-    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-      animation: controller,
-      builder: (context, child) {
-        return SizedBox.expand(
-          child: CustomPaint(
-            painter: WaterDropsPainter(drops),
-          ),
-        );
-      },
-    );
+        animation: _controller,
+        builder: (context, child) {
+          return CustomPaint(
+            painter: RainPainter(raindrops),
+            child: Container(),
+          );
+        });
+  }
+
+  void updateRaindrops(double time) {
+    setState(() {
+      raindrops.removeWhere((drop) =>
+          drop.y > MediaQuery.of(context).size.height ||
+          (drop.y > 0 && drop.y < 10 && time < 0.1));
+
+      for (int i = 0; i < 5; i++) {
+        double initialX =
+            Random().nextDouble() * MediaQuery.of(context).size.width;
+        double initialY = 0.0;
+        double size = Random().nextDouble() * 5.0 + 5.0;
+        double speed = Random().nextDouble() * 20.0 + 20.0;
+
+        raindrops.add(Raindrop(initialX, initialY, size, speed));
+      }
+
+      raindrops.forEach((drop) {
+        double gravity = 3.0;
+        double displacement = 0.5 * gravity * time * time;
+        drop.y += drop.speed * time + displacement;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 }
 
-class WaterDropsPainter extends CustomPainter {
-  List<Drop> drops;
+class RainPainter extends CustomPainter {
+  final List<Raindrop> raindrops;
 
-  WaterDropsPainter(this.drops);
+  RainPainter(this.raindrops);
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint();
-    paint
-      ..color = Colors.white
-      ..strokeCap = StrokeCap.round
-      ..strokeWidth = 2.0;
+    Paint paint = Paint()
+      ..color = Colors.blue
+      ..strokeWidth = 2.0
+      ..strokeCap = StrokeCap.round;
 
-    for (int i = 0; i < drops.length; i++) {
-      final drop = drops[i];
-      if (drop.animation != null) {
-        final offset = drop.animation!.value;
-
-        final p1 = Offset(offset.dx, offset.dy);
-        final p2 = Offset(
-            offset.dx, offset.dy + 10.0); // Adjust the length of raindrops
-        canvas.drawLine(p1, p2, paint);
-      }
-    }
+    raindrops.forEach((drop) {
+      canvas.drawLine(
+        Offset(drop.x, drop.y),
+        Offset(drop.x, drop.y + drop.size),
+        paint,
+      );
+    });
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+  bool shouldRepaint(CustomPainter oldDelegate) {
     return true;
-  }
-}
-
-class Drop {
-  Offset? start;
-  final Offset? end;
-  final int? speed;
-  final Animation<Offset>? animation;
-  final Duration? duration;
-  final AnimationController? controller;
-  bool isAnimating;
-  Drop(
-      {this.speed,
-      required this.duration,
-      this.animation,
-      this.controller,
-      this.end,
-      this.isAnimating = false,
-      this.start});
-
-  void update() {
-    start = start! + start! * speed!.toDouble();
-    if (start!.dx > end!.dx || start!.dy > end!.dy) {
-      start = end;
-      isAnimating = false;
-    }
-    isAnimating = true;
   }
 }

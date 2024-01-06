@@ -19,7 +19,7 @@ Map<String, Widget> routes = {
   '/retro': RetroArt(),
   "/ripple": RippleEffect(),
   "/spiro": GeometricSpiro(),
-  RainDrops.route: RainDrops(),
+  RainAnimation.route: RainAnimation(),
   Sunshine.routeName: Sunshine(),
   GradientArt.routeName: GradientArt(),
 };
