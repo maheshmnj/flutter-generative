@@ -216,7 +216,6 @@ class Raypainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    // TODO: implement shouldRepaint
     return true;
   }
 }
@@ -250,7 +249,6 @@ class CirclePainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    // TODO: implement shouldRepaint
     return true;
   }
 }

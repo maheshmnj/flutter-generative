@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_generative/art/art.dart';
+import 'package:flutter_generative/art/raindrops.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
 
 import 'homepage.dart';
@@ -18,6 +19,7 @@ Map<String, Widget> routes = {
   '/retro': RetroArt(),
   "/ripple": RippleEffect(),
   "/spiro": GeometricSpiro(),
+  RainDrops.route: RainDrops(),
   Sunshine.routeName: Sunshine(),
   GradientArt.routeName: GradientArt(),
 };

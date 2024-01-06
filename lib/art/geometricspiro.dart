@@ -8,7 +8,6 @@ class GeometricSpiro extends StatefulWidget {
 
 class _GeometricSpiroState extends State<GeometricSpiro>
     with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
   late Animation<Color> animation;
 
   @override
